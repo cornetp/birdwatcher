@@ -26,7 +26,7 @@ void CWebServer::Enable()
 		m_webserver = new Webserver();
 		m_webserver->RegisterHandlerGet(&CWebServer::HandlerGetCB);
 		m_webserver->RegisterHandlerPost(&CWebServer::HandlerPostCB);
-		m_webserver->Host();
+		m_webserver->Host(8080);
 	}
 }
 

@@ -1440,6 +1440,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->webServerEnableCheckBox->Text = L"Enable Web Server";
 			this->webServerEnableCheckBox->UseVisualStyleBackColor = true;
 			this->webServerEnableCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Settings::webServerEnableCheckBox_CheckedChanged);
+
+			this->webServerEnableCheckBox->Enabled = false;
+
 			// 
 			// motionDetectionEnableCheckBox
 			// 
