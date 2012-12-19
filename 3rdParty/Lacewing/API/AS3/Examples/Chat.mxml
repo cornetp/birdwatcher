@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="init()">
+	
+<mx:TextInput x="10" y="10" width="150" height="25" id="nameInput"></mx:TextInput>
+<mx:Button x="170" y="10" width="150" height="25" label="Connect" id="connectButton"></mx:Button>
+
+<mx:TextArea x="10" y="45" width="400" height="400" id="chatOutput" editable="false"></mx:TextArea>
+<mx:TextInput x="10" y="450" width="400" height="25" id="chatInput"></mx:TextInput>
+
+<mx:TextArea x="415" y="45" width="100" height="400" id="userList" editable="false"></mx:TextArea>
+
+
+<mx:Script>   
+<![CDATA[
+
+import mx.events.FlexEvent;
+import flash.events.Event;
+import flash.utils.ByteArray;
+import org.aquadasoft.lacewing.*;
+
+public var client:Client;
+public var channel:Channel;
+	
+// We'll call this we join, and whenever someone joins/leaves
+
+public function updateUserList():void
+{
+	this.userList.text = "";
+	
+	for (var i:int = 0; i < channel.Peers.length; ++ i)
+	{
+		this.userList.text += channel.Peers[i].Name + "\n";
+	}
+	
+	// We're not a peer, so we have to add ourself to the list
+	this.userList.text += client.Name;
+}
+
+
+// This is the basic pattern for using Lacewing -
+//
+// On connect -> Set name
+// On name set -> Join channel
+// On join channel -> Good to go!
+//
+
+public function onConnect(welcomeMessage:String):void
+{
+	client.SetName(this.nameInput.text);
+}
+
+public function onSetName():void
+{
+	client.JoinChannel("FlexChatTest");
+	this.chatOutput.text += "Connected!";
+}
+
+public function onJoinChannel(channel:Channel):void
+{
+	this.channel = channel;
+	updateUserList();
+}
+
+public function onChannelMessage(channel:Channel, peer:Peer, subchannel:int, message:ByteArray, messageType:int):void
+{
+	this.chatOutput.text += "\n<" + peer.Name + "> " + message.readUTFBytes(message.bytesAvailable);
+}
+
+public function onPeerConnect(channel:Channel, peer:Peer):void
+{
+	updateUserList();
+	this.chatOutput.text += "\n" + peer.Name + " entered the chat";
+}
+
+public function onPeerDisconnect(channel:Channel, peer:Peer):void
+{
+	updateUserList();
+	this.chatOutput.text += "\n" + peer.Name + " left the chat";
+}
+
+public function onConnectButtonClick(e:Event):void
+{
+	// Connect to the public Lacewing development server at server.klikfarm.com
+	// You could also run LacewingServer.exe locally and connect to "localhost"
+	
+	client.Connect("server.klikfarm.com", 6121);
+	
+}
+
+public function onChatInputEnterPressed(e:Event):void
+{
+	
+	var message:ByteArray = new ByteArray();
+	message.writeUTFBytes(this.chatInput.text);
+	
+	// What you use for the subchannel and type is up to you - these get passed
+	// to onChannelMessage on the receiving end. Subchannel can be 0-255 and type
+	// can be 0-7
+	
+	channel.Send(0, 0, message);
+	
+	this.chatOutput.text += "\n<" + client.Name + "> " + this.chatInput.text;
+	this.chatInput.text = "";
+}
+
+public function init():void
+{
+	client = new Client;
+	
+	// First we tell Lacewing which functions we want to use as our handlers for each event
+	
+	client.HandlerConnect = onConnect;
+	client.HandlerSetName = onSetName;
+	client.HandlerJoinChannel = onJoinChannel;
+	client.HandlerChannelMessage = onChannelMessage;
+	client.HandlerPeerConnect = onPeerConnect;
+	client.HandlerPeerDisconnect = onPeerDisconnect;
+	
+	// Now we register the event listeners for the various controls
+	
+	this.connectButton.addEventListener(MouseEvent.CLICK, onConnectButtonClick);
+	this.chatInput.addEventListener(mx.events.FlexEvent.ENTER, onChatInputEnterPressed);
+	
+}
+
+
+]]>
+</mx:Script>
+
+</mx:Application>

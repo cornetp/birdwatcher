@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IJGWin32", "IJGWin32.vcxproj", "{1B081719-1565-4F99-840B-262ECB3C502F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1B081719-1565-4F99-840B-262ECB3C502F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1B081719-1565-4F99-840B-262ECB3C502F}.Debug|Win32.Build.0 = Debug|Win32
+		{1B081719-1565-4F99-840B-262ECB3C502F}.Release|Win32.ActiveCfg = Release|Win32
+		{1B081719-1565-4F99-840B-262ECB3C502F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
