@@ -1454,6 +1454,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->motionDetectionEnableCheckBox->Text = L"Enable motion detection";
 			this->motionDetectionEnableCheckBox->UseVisualStyleBackColor = true;
 			this->motionDetectionEnableCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Settings::motionDetectionEnableCheckBox_CheckedChanged);
+
+			this->motionDetectionEnableCheckBox->Enabled = false;
+
 			// 
 			// Settings
 			// 
