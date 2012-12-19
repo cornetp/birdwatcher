@@ -1,6 +1,10 @@
 *.sdf
 *.suo
 *.user
+*.opensdf
 
 *Debug
 *Release
+
+*.bwc
+
