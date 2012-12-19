@@ -102,6 +102,7 @@
     <ClInclude Include="bwinterfaces.h" />
     <ClInclude Include="bwStillCapture.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="font_8x8.h" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

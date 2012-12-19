@@ -335,7 +335,7 @@ void CBirdwatcherFTPSender::Send()
 				char *day[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 				//sprintf_s(ovl, "%s %02d/%02d/%04d - %02d:%02d:%02d", day[time.wDayOfWeek], time.wDay, time.wMonth, time.wYear, time.wHour, time.wMinute, time.wSecond);
 				sprintf_s(ovl, "%02d/%02d/%04d - %02d:%02d:%02d", time.wDay, time.wMonth, time.wYear, time.wHour, time.wMinute, time.wSecond);
-				m_pOverlay->PrintString(m_pImage[0],  m_pbmi->biWidth/m_image_size_divider, abs(m_pbmi->biHeight)/m_image_size_divider, 10, 10, ovl, 25);
+				m_pOverlay->PrintString(m_pImage[0],  m_pbmi->biWidth/m_image_size_divider, abs(m_pbmi->biHeight)/m_image_size_divider, 10, 10, ovl);
 			}
 
 			JSAMPLE * scanline = NULL;
