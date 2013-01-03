@@ -129,12 +129,12 @@ void CWebServer::DisplayControlForm(Lacewing::Webserver::Request &Request)
 
 	if(m_pFilterGraph->IsRunning())
 	{
-		Request << "<font color='green'>The acquisition is active</font> <br/>";
+		Request << "<font color='green'>The acquisition is active</font> => <a href='../stop'>Stop</a><br/>";
 		// display stop button
 	}
 	else
 	{
-		Request << "<font color='red'>The acquisition is not active</font> <br/>";
+		Request << "<font color='red'>The acquisition is not active</font> => <a href='../start'>Start</a> <br/>";
 		// Display start button
 	}
 
@@ -323,6 +323,16 @@ void CWebServer::HandlerGetCB(Lacewing::Webserver &Webserver, Lacewing::Webserve
 		else if(!strcmp(Request.URL, "logout"))
 		{
 			Disconnect(Request.IP());
+			Request.SetRedirect("birdwatcher");
+		}
+		else if(!strcmp(Request.URL, "stop"))
+		{
+			m_pFilterGraph->Stop();
+			Request.SetRedirect("birdwatcher");
+		}
+		else if(!strcmp(Request.URL, "start"))
+		{
+			m_pFilterGraph->Run();
 			Request.SetRedirect("birdwatcher");
 		}
 		else
