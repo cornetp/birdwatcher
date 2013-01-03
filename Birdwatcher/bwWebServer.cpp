@@ -19,6 +19,42 @@ CWebServer::~CWebServer()
 		delete(m_webserver);
 }
 
+void CWebServer::SetFilterGraph(CFilterGraph *pGraph)
+{
+	m_pFilterGraph = pGraph;
+	if(m_pFilterGraph)
+		m_pFilterGraph->SetWebServer(this);
+}
+
+HRESULT CWebServer::WriteToStream(IStream *pStream)
+{
+	HRESULT hr;
+	int bwcVersionMajor = 1;
+	int bwcVersionMinor = 0;
+	int bwcVersion = (bwcVersionMajor << 16) + bwcVersionMinor;
+	WRITEOUT(bwcVersion);
+	WRITEOUT(m_bEnabled);
+	return hr;
+}
+
+HRESULT CWebServer::ReadFromStream(IStream *pStream)
+{
+	HRESULT hr;
+	int bwcVersion;
+	READIN(bwcVersion);
+	int bwcVersionMajor = (bwcVersion>>16)&0xffff;
+	int bwcVersionMinor = bwcVersion&0xffff;
+
+	READIN(m_bEnabled);
+
+	if(m_bEnabled)
+		Enable();
+	else
+		Disable();
+	
+	return hr;
+}
+
 void CWebServer::Enable()
 {
 	if(!m_webserver)
@@ -28,6 +64,7 @@ void CWebServer::Enable()
 		m_webserver->RegisterHandlerPost(&CWebServer::HandlerPostCB);
 		m_webserver->Host(8080);
 	}
+	m_bEnabled = true;
 }
 
 void CWebServer::Disable()
@@ -39,6 +76,7 @@ void CWebServer::Disable()
 		delete(m_webserver);
 		m_webserver = NULL;
 	}
+	m_bEnabled = false;
 }
 
 bool CWebServer::IsConnected(int IP)

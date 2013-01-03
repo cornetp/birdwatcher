@@ -299,7 +299,9 @@ void Settings::EnableRecordingSettings(bool bEnable)
 
 void Settings::InitializeWebServerSettings(void)
 {
-	this->webServerEnableCheckBox->Checked = m_pWebServer->IsEnabled();
+	bool enabled = m_pWebServer->IsEnabled();
+	this->webServerEnableCheckBox->Checked = enabled;
+	this->webServerGroupBox->Enabled::set(enabled);
 }
 
 void Settings::InitializeMotionDetectionSettings(void)
@@ -307,6 +309,7 @@ void Settings::InitializeMotionDetectionSettings(void)
 	BOOL bMotionDetectionEnabled = FALSE;
 	m_pGraph->GetEnableMotionDetection(&bMotionDetectionEnabled);
 	this->motionDetectionEnableCheckBox->Checked = bMotionDetectionEnabled?true:false;
+	this->motionDetectionGroupBox->Enabled::set(bMotionDetectionEnabled);
 }
 
 void Settings::RefreshImageFileName()
@@ -430,6 +433,7 @@ void Settings::ApplySettings(void)
 
 	ApplyFTPSettings();
 	ApplyStillCaptureSettings();
+	ApplyWebServerSettings();
 	ApplyMotionDetectionSettings();
 }
 
@@ -584,6 +588,16 @@ void Settings::ApplyStillCaptureSettings(void)
 	BOOL bOverlayEnabled = this->StillOverlayEnabledCheckBox->Checked? TRUE : FALSE;
 	m_pGraph->SetStillOverlayEnable(bOverlayEnabled);
 }
+
+void Settings::ApplyWebServerSettings(void)
+{
+	// Enable/Disable
+	if(this->webServerEnableCheckBox->Checked)
+		m_pWebServer->Enable();
+		else
+	m_pWebServer->Disable();
+}
+
 	
 void Settings::ApplyMotionDetectionSettings(void)
 {

@@ -27,11 +27,15 @@ struct schedulerEntry {
 	SYSTEMTIME stopTime;
 };
 
+class CWebServer;
 class CFilterGraph : public CAMThread
 {
 public:
 	CFilterGraph();
 	~CFilterGraph();
+
+	// We must know the web server object to write to the persist stream.
+	void SetWebServer(CWebServer *ws) { m_pWebServer = ws; };
 
 	// Interface functions
 	HRESULT BuildGraph();
@@ -211,4 +215,6 @@ private:
 	HANDLE m_hTimer;
 	HANDLE m_hStopThreadEvent;
 	DWORD ThreadProc();
+
+	CWebServer *m_pWebServer;
 };

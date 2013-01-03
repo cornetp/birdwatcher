@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "FilterGraph.h"
+#include "bwWebServer.h"
 #include <Strsafe.h>
 #include "Debug.h"
 
@@ -87,6 +88,8 @@ CFilterGraph::CFilterGraph()
 	m_pMotionDetectionControl = NULL;
 
 	m_NbVideoSources = 0;
+
+	m_pWebServer = NULL;
 
 	// Enum Video&Audio sources
 	if(FAILED(EnumCaptureDevices()))
@@ -222,6 +225,10 @@ CFilterGraph::~CFilterGraph()
 HRESULT CFilterGraph::WriteToStream(IStream *pStream)
 {
 	HRESULT hr;
+	int bwcVersionMajor = 1;
+	int bwcVersionMinor = 0;
+	int bwcVersion = (bwcVersionMajor << 16) + bwcVersionMinor;
+	WRITEOUT(bwcVersion);
 	WRITEOUT(m_VideoDeviceIndex);
 	WRITEOUT(m_AudioDeviceIndex);
 	WRITEOUT(m_VideoCompressorIndex);
@@ -244,13 +251,23 @@ HRESULT CFilterGraph::WriteToStream(IStream *pStream)
 		WRITEOUT(m_VideoRecordingSchedule[i].stopTime.wSecond);
 	}
 
+
 	return hr;
 }
 
 HRESULT CFilterGraph::ReadFromStream(IStream *pStream)
 {
 	HRESULT hr;
-	READIN(m_VideoDeviceIndex);
+	int bwcVersion;
+	READIN(bwcVersion);
+	int bwcVersionMajor = (bwcVersion>>16)&0xffff;
+	int bwcVersionMinor = bwcVersion&0xffff;
+
+	if(bwcVersionMajor < 1) // The version field didn't exist in the early days
+		m_VideoDeviceIndex = bwcVersion;
+	else
+		READIN(m_VideoDeviceIndex);
+
 	READIN(m_AudioDeviceIndex);
 	READIN(m_VideoCompressorIndex);
 	READIN(m_bRecordingEnabled);
@@ -317,6 +334,14 @@ HRESULT CFilterGraph::SaveConfig()
 	WriteToStream(pStream);
 	SAFE_RELEASE(pStream);
 
+	if(m_pWebServer)
+	{
+		hr = pStorage->CreateStream(L"webServer", STGM_WRITE | STGM_CREATE | STGM_SHARE_EXCLUSIVE, 0, 0, &pStream);
+		if(SUCCEEDED(hr))
+			m_pWebServer->WriteToStream(pStream);
+		SAFE_RELEASE(pStream);
+	}
+
 	hr = pStorage->Commit(STGC_DEFAULT);
     SAFE_RELEASE(pStorage);
 
@@ -367,14 +392,24 @@ HRESULT CFilterGraph::LoadConfig()
 	{
 		hr = m_pBirdwatcher->QueryInterface(IID_IPersistStream, (void**)&pPersistStream);
 		hr = pStorage->OpenStream(L"bwFilter", 0, STGM_READ | STGM_SHARE_EXCLUSIVE, 0, &pStream);
-		hr = pPersistStream->Load(pStream);
+		if(SUCCEEDED(hr))
+			hr = pPersistStream->Load(pStream);
 	}
 	SAFE_RELEASE(pPersistStream);
 	SAFE_RELEASE(pStream);
 
 	hr = pStorage->OpenStream(L"application", 0, STGM_READ | STGM_SHARE_EXCLUSIVE, 0, &pStream);
-	ReadFromStream(pStream);
+	if(SUCCEEDED(hr))
+		ReadFromStream(pStream);
 	SAFE_RELEASE(pStream);
+
+	if(m_pWebServer)
+	{
+		hr = pStorage->OpenStream(L"webServer", 0, STGM_READ | STGM_SHARE_EXCLUSIVE, 0, &pStream);
+		if(SUCCEEDED(hr))
+			m_pWebServer->ReadFromStream(pStream);
+		SAFE_RELEASE(pStream);
+	}
 
 	SAFE_RELEASE(pStorage);
 	return hr;

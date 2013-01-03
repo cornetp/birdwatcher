@@ -193,6 +193,7 @@ private: System::Windows::Forms::TabPage^  WebServerTab;
 private: System::Windows::Forms::TabPage^  MotionDetectionTab;
 private: System::Windows::Forms::CheckBox^  motionDetectionEnableCheckBox;
 private: System::Windows::Forms::GroupBox^  motionDetectionGroupBox;
+private: System::Windows::Forms::GroupBox^  webServerGroupBox;
 
 
 
@@ -218,6 +219,7 @@ private: System::Windows::Forms::GroupBox^  motionDetectionGroupBox;
 		bool ApplyRecordingSettings(void);
 		void ApplyFTPSettings(void);
 		void ApplyStillCaptureSettings(void);
+		void ApplyWebServerSettings(void);
 		void ApplyMotionDetectionSettings(void);
 private: System::ComponentModel::IContainer^  components;
 
@@ -339,6 +341,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->stillFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->webServerEnableCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->motionDetectionEnableCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->webServerGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->tabControl1->SuspendLayout();
 			this->CapDevicesTab->SuspendLayout();
 			this->audioDevicesGroupBox->SuspendLayout();
@@ -351,6 +354,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->Recordingtab->SuspendLayout();
 			this->videoFileGroupBox->SuspendLayout();
 			this->videoCompressionGroupBox->SuspendLayout();
+			this->WebServerTab->SuspendLayout();
 			this->MotionDetectionTab->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->videoDirectoryErrorProvider))->BeginInit();
 			this->SuspendLayout();
@@ -1331,6 +1335,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// WebServerTab
 			// 
+			this->WebServerTab->Controls->Add(this->webServerGroupBox);
 			this->WebServerTab->Location = System::Drawing::Point(4, 22);
 			this->WebServerTab->Name = L"WebServerTab";
 			this->WebServerTab->Padding = System::Windows::Forms::Padding(3);
@@ -1440,13 +1445,11 @@ private: System::ComponentModel::IContainer^  components;
 			this->webServerEnableCheckBox->Text = L"Enable Web Server";
 			this->webServerEnableCheckBox->UseVisualStyleBackColor = true;
 			this->webServerEnableCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Settings::webServerEnableCheckBox_CheckedChanged);
-
-			this->webServerEnableCheckBox->Enabled = false;
-
 			// 
 			// motionDetectionEnableCheckBox
 			// 
 			this->motionDetectionEnableCheckBox->AutoSize = true;
+			this->motionDetectionEnableCheckBox->Enabled = false;
 			this->motionDetectionEnableCheckBox->Location = System::Drawing::Point(140, 35);
 			this->motionDetectionEnableCheckBox->Name = L"motionDetectionEnableCheckBox";
 			this->motionDetectionEnableCheckBox->Size = System::Drawing::Size(140, 17);
@@ -1454,9 +1457,15 @@ private: System::ComponentModel::IContainer^  components;
 			this->motionDetectionEnableCheckBox->Text = L"Enable motion detection";
 			this->motionDetectionEnableCheckBox->UseVisualStyleBackColor = true;
 			this->motionDetectionEnableCheckBox->CheckedChanged += gcnew System::EventHandler(this, &Settings::motionDetectionEnableCheckBox_CheckedChanged);
-
-			this->motionDetectionEnableCheckBox->Enabled = false;
-
+			// 
+			// webServerGroupBox
+			// 
+			this->webServerGroupBox->Location = System::Drawing::Point(6, 5);
+			this->webServerGroupBox->Name = L"webServerGroupBox";
+			this->webServerGroupBox->Size = System::Drawing::Size(430, 312);
+			this->webServerGroupBox->TabIndex = 1;
+			this->webServerGroupBox->TabStop = false;
+			this->webServerGroupBox->Text = L"Web server settings";
 			// 
 			// Settings
 			// 
@@ -1496,6 +1505,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->videoFileGroupBox->PerformLayout();
 			this->videoCompressionGroupBox->ResumeLayout(false);
 			this->videoCompressionGroupBox->PerformLayout();
+			this->WebServerTab->ResumeLayout(false);
 			this->MotionDetectionTab->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->videoDirectoryErrorProvider))->EndInit();
 			this->ResumeLayout(false);
@@ -1800,10 +1810,9 @@ private: System::Void posYTextBox_TextChanged(System::Object^  sender, System::E
 			 sprintf_s(cPosY, "%d", posy);
 			 this->posYTextBox->Text = gcnew String(cPosY);		 }
 private: System::Void webServerEnableCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(this->webServerEnableCheckBox->Checked)
-				 m_pWebServer->Enable();
-			 else
-				 m_pWebServer->Disable();
+			 this->settingsApplyButton->Enabled = true;
+			 bool val = this->webServerEnableCheckBox->Checked::get();
+			 this->webServerGroupBox->Enabled::set(val);
 		 }
 private: System::Void motionDetectionEnableCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 this->settingsApplyButton->Enabled = true;

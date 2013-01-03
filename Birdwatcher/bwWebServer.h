@@ -12,7 +12,9 @@ public:
 	void Enable();
 	void Disable();
 	bool IsEnabled() { return m_webserver?true:false; };
-	static void SetFilterGraph(CFilterGraph *pGraph) {m_pFilterGraph = pGraph; };
+	void SetFilterGraph(CFilterGraph *pGraph);
+	HRESULT WriteToStream(IStream *pStream);
+	HRESULT ReadFromStream(IStream *pStream);
 
 private:
 	Lacewing::Webserver *m_webserver;
@@ -42,6 +44,7 @@ private:
 	static void Connect(int IP);
 	static void Disconnect(int IP);
 	static bool loggedin;
+
 
 	bool m_bEnabled;
 };

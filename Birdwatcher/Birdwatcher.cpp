@@ -23,12 +23,11 @@ int main(array<System::String ^> ^args)
 
 	// Create web server object
 	CWebServer web_server;
-	//web_server.Enable();
 
 	// Create the filter graph
 	CFilterGraph graph;
 
-	//web_server.SetFilterGraph(&graph);
+	web_server.SetFilterGraph(&graph);
 	// Create the main window and run it
 	Form1 ^mainWindow = gcnew Form1(&graph, &web_server);
 	mainWindow->Init();
